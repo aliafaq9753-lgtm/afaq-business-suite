@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AFAQ Vehicle Maintenance</title>
+<style>
+:root{--navy:#10243a;--blue:#1769aa;--light:#f3f6fa;--line:#dce3eb;--text:#1d2b3a;--muted:#667789;--green:#16845b;--orange:#c77716}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--light);color:var(--text)}
+header{background:linear-gradient(120deg,#10243a,#1b527e);color:white;padding:20px 22px}
+.head{max-width:1200px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+h1{font-size:22px;margin:0 0 5px}.sub{font-size:13px;color:#d7e5f1}
+.demo{background:#fff2d8;color:#7a4b00;padding:7px 11px;border-radius:20px;font-size:12px;font-weight:bold}
+nav{max-width:1200px;margin:14px auto 0;display:flex;gap:8px;flex-wrap:wrap}
+nav button{background:#ffffff18;color:white;border:1px solid #ffffff44;padding:9px 13px;border-radius:8px;cursor:pointer}
+nav button.active,nav button:hover{background:white;color:var(--navy)}
+main{max-width:1200px;margin:22px auto;padding:0 16px 40px}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.card,.panel{background:white;border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:0 2px 8px #15283b08}
+.card small{color:var(--muted)}.metric{font-size:27px;font-weight:700;margin-top:8px}
+.panel{margin-bottom:16px}.panel h2{font-size:17px;margin:0 0 14px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:12px}
+input,select,textarea{width:100%;padding:10px;border:1px solid #cbd5df;border-radius:8px;background:white;font:inherit;color:var(--text)}
+input:focus,select:focus,textarea:focus{outline:2px solid #b9d9f4;border-color:var(--blue)}
+.formgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.field label{display:block;font-size:12px;font-weight:bold;color:#526477;margin-bottom:6px}
+.btn{border:0;background:var(--blue);color:white;padding:10px 14px;border-radius:8px;font-weight:bold;cursor:pointer}
+.btn.secondary{background:#eaf1f7;color:#23445f}.btn.danger{background:#a93232}.btn.green{background:var(--green)}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:620px}
+th,td{padding:11px 9px;border-bottom:1px solid var(--line);text-align:left}
+th{background:#f5f8fb;color:#526477;font-size:12px}
+.tablewrap{overflow-x:auto}
+.vehicle-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.vehicle{border:1px solid var(--line);border-radius:10px;padding:13px;background:white}
+.vehicle-head{display:flex;align-items:center;gap:11px;margin-bottom:9px}.vehicle-avatar{width:68px;height:68px;flex:0 0 68px;border-radius:50%;object-fit:cover;border:2px solid var(--line);background:#eef3f7}.vehicle-avatar-placeholder{width:68px;height:68px;flex:0 0 68px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#eef3f7;color:#526477;font-size:28px;border:2px solid var(--line)}
+.vehicle strong{display:block;font-size:15px;margin-bottom:6px}.vehicle p{font-size:12px;color:var(--muted);margin:0 0 10px}
+.tag{font-size:11px;padding:4px 7px;border-radius:20px;background:#e8f4ee;color:#176443}
+.muted{color:var(--muted);font-size:13px}.hidden{display:none!important}
+.empty{text-align:center;color:var(--muted);padding:25px}
+.actions{display:flex;gap:7px;flex-wrap:wrap}
+.notice{background:#fff8e9;border:1px solid #f0d8a8;color:#76521b;padding:11px;border-radius:9px;font-size:12px;margin-bottom:15px}
+.tyre-layout{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:8px}.tyre-layout>div{border:1px solid var(--line);border-radius:9px;padding:12px}.tyre-options{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.tyre-options label{display:flex;align-items:center;gap:5px;background:#f3f6fa;border:1px solid var(--line);border-radius:7px;padding:8px 10px}.tyre-options input{width:auto;margin:0}.bill-preview{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:8px}.bill-thumb{width:76px;height:76px;object-fit:cover;border:1px solid var(--line);border-radius:8px}.doc-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}.doc-card{border:1px solid var(--line);border-radius:9px;padding:12px}.doc-card label{display:block;font-size:12px;font-weight:bold;color:#526477;margin-bottom:7px}.doc-preview{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px}.doc-preview img{width:78px;height:68px;object-fit:cover;border-radius:7px;border:1px solid var(--line)}.bill-link{color:var(--blue);font-weight:bold;text-decoration:none}.detailtop{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center}
+@media(max-width:800px){.cards{grid-template-columns:repeat(2,1fr)}.vehicle-grid{grid-template-columns:repeat(2,1fr)}.formgrid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){header{padding:16px}.cards{gap:8px}.card{padding:12px}.metric{font-size:22px}.vehicle-grid,.formgrid{grid-template-columns:1fr}main{padding:0 11px 30px}nav button{font-size:12px;padding:8px 10px}}
+
+/* AFAQ premium visual refresh — presentation only; existing app logic/data preserved */
+:root{--navy:#0b1f33;--blue:#1769aa;--light:#f2f6fb;--line:#e1e8f0;--text:#172b40;--muted:#6c7d90;--green:#13845d;--orange:#c77716;--shadow:0 10px 28px rgba(17,39,62,.075)}
+body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;background:radial-gradient(ellipse at 10% 0%,#e7f1fb 0,transparent 38%),linear-gradient(180deg,#f7f9fc 0%,#edf3f8 100%);color:var(--text);letter-spacing:.05px}
+header{background:linear-gradient(118deg,#081a2d 0%,#123b60 58%,#1769aa 100%);padding:25px 22px 17px;box-shadow:0 8px 28px rgba(6,27,47,.2);position:relative;overflow:hidden}
+header:after{content:"";position:absolute;width:360px;height:360px;border:1px solid #ffffff18;border-radius:50%;right:-95px;top:-220px;box-shadow:0 0 0 35px #ffffff08,0 0 0 70px #ffffff06;pointer-events:none}
+.head,nav{position:relative;z-index:1;max-width:1280px}
+h1{font-size:clamp(22px,3vw,29px);font-weight:800;letter-spacing:-.6px;margin:0 0 6px}.sub{font-size:13px;color:#d4e4f2;letter-spacing:.2px}
+.demo{background:#fff4d9;color:#80520b;padding:8px 12px;border:1px solid #ffdfa0;border-radius:999px;font-size:11px;letter-spacing:.45px;box-shadow:0 3px 10px #07192b33}
+nav{margin-top:20px;gap:7px}
+nav button{background:#ffffff12;color:#e8f2fb;border:1px solid #ffffff28;padding:10px 14px;border-radius:10px;font-size:13px;font-weight:650;transition:all .18s ease;backdrop-filter:blur(6px)}
+nav button.active,nav button:hover{background:#fff;color:#102d49;border-color:#fff;box-shadow:0 4px 12px #061a2b35;transform:translateY(-1px)}
+main{max-width:1280px;margin:25px auto;padding:0 20px 48px}
+.cards{grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-bottom:18px}
+.card,.panel{background:rgba(255,255,255,.96);border:1px solid #e2eaf2;border-radius:16px;padding:19px;box-shadow:var(--shadow)}
+.card{position:relative;overflow:hidden;min-height:104px;transition:transform .18s ease,box-shadow .18s ease}
+.card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,#2a83c7,#75b6e8)}
+.card:hover,.vehicle:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(17,39,62,.11)}
+.card small{font-size:12px;font-weight:650;color:#708196;letter-spacing:.2px}.metric{font-size:29px;font-weight:800;letter-spacing:-.7px;color:#102d49;margin-top:10px}
+.panel{margin-bottom:17px;padding:21px}
+.panel h2{font-size:18px;font-weight:750;letter-spacing:-.25px;color:#18334d;margin:0 0 15px}
+.toolbar{gap:12px;margin-bottom:15px}
+input,select,textarea{padding:11px 12px;border:1px solid #d4dee8;border-radius:10px;background:#fbfdff;font-size:14px;transition:border-color .16s,box-shadow .16s}
+input:hover,select:hover,textarea:hover{border-color:#aebfd0}
+input:focus,select:focus,textarea:focus{outline:0;border-color:#3a8dca;box-shadow:0 0 0 3px #d9edfc;background:white}
+.formgrid{gap:15px}.field label{font-size:12px;font-weight:750;color:#52677d;margin-bottom:7px;letter-spacing:.15px}
+.btn{padding:11px 16px;border-radius:10px;background:linear-gradient(135deg,#1769aa,#2183c4);box-shadow:0 4px 10px #1769aa24;font-size:13px;transition:transform .15s,box-shadow .15s,filter .15s}
+.btn:hover{filter:brightness(1.05);transform:translateY(-1px);box-shadow:0 7px 15px #1769aa30}.btn:active{transform:translateY(0)}
+.btn.secondary{background:#edf3f8;color:#28465f;box-shadow:none;border:1px solid #dce6ef}.btn.green{background:linear-gradient(135deg,#12805a,#1ba875);box-shadow:0 4px 10px #12805a24}.btn.danger{background:linear-gradient(135deg,#a92e39,#d34850);box-shadow:0 4px 10px #a9323224}
+.notice{background:linear-gradient(100deg,#fff9eb,#fffdf7);border:1px solid #f2dfb8;color:#76551e;padding:13px 15px;border-radius:12px;font-size:12px;margin-bottom:17px}
+.tablewrap{border:1px solid #e5ebf1;border-radius:12px;background:#fff;overflow:auto}
+table{font-size:13px;min-width:640px}th,td{padding:12px 11px;border-bottom:1px solid #edf1f5}th{background:#f4f8fc;color:#536b81;font-size:11px;text-transform:uppercase;letter-spacing:.45px;white-space:nowrap}tbody tr:hover{background:#f8fbfe}tbody tr:last-child td{border-bottom:0}
+.vehicle-grid{gap:15px}.vehicle{border:1px solid #e1e9f1;border-radius:15px;padding:15px;background:linear-gradient(160deg,#fff,#fbfdff);box-shadow:0 5px 16px rgba(17,39,62,.045);transition:transform .18s,box-shadow .18s}
+.vehicle-avatar,.vehicle-avatar-placeholder{border:3px solid #e7f0f7;box-shadow:0 3px 9px #10243a12}.vehicle strong{font-size:16px;color:#18334d}.vehicle p{line-height:1.55}.tag{font-weight:750;letter-spacing:.2px;padding:5px 9px}
+.empty{padding:30px 16px!important;color:#8392a2;font-size:13px}
+.actions{gap:8px}.detailtop{padding-bottom:12px;border-bottom:1px solid #edf1f5}
+.tyre-layout>div,.doc-card{border:1px solid #e3eaf1;border-radius:12px;background:#fbfdff;padding:14px}.tyre-options label{border-radius:9px;background:#fff;border-color:#e1e8ef;font-size:13px;font-weight:650;cursor:pointer}.tyre-options label:has(input:checked){background:#e9f5ff;border-color:#75b6e8;color:#145b91}
+.bill-thumb,.doc-preview img{border:1px solid #dce6ef;border-radius:10px;box-shadow:0 3px 9px #10243a0d}
+.bill-link{color:#1769aa}.muted{line-height:1.5}.hidden{display:none!important}
+#dashboard>.panel:first-of-type{border-color:#f0d6d7;background:linear-gradient(110deg,#fff,#fffafa)}
+#dashboard>.panel:first-of-type h2{color:#8e3038}
+#dashboard>.panel:first-of-type .btn.danger{min-width:112px}
+@media(max-width:800px){main{padding:0 14px 36px}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.vehicle-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.formgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){header{padding:18px 14px 14px}.head{align-items:flex-start}.demo{font-size:10px}nav{margin-top:15px;gap:6px}nav button{font-size:11px;padding:8px 10px;border-radius:8px}main{padding:0 10px 28px;margin-top:16px}.cards{gap:9px}.card{padding:13px;min-height:92px;border-radius:13px}.metric{font-size:23px}.panel{padding:15px;border-radius:13px}.panel h2{font-size:16px}.vehicle-grid,.formgrid{grid-template-columns:1fr}.tyre-layout,.doc-grid{grid-template-columns:1fr}.toolbar{align-items:flex-start}.btn{padding:10px 12px}}
+@media print{body{background:#fff}header{background:#fff!important;color:#111!important;box-shadow:none;padding:8px 0}nav,.btn,.demo{display:none!important}main{max-width:none;margin:0;padding:0}.panel,.card,.vehicle{box-shadow:none;break-inside:avoid;border:1px solid #ccc}.tablewrap{overflow:visible}table{min-width:0;font-size:10px}th,td{padding:6px}}
+
+
+#authGate{position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#081a2d,#1769aa);display:flex;align-items:center;justify-content:center;padding:18px}
+.auth-card{width:min(440px,100%);background:#fff;border-radius:20px;padding:28px;box-shadow:0 25px 80px #00172c66}.auth-card h2{margin:0 0 8px;color:#123653}.auth-card .field{margin:13px 0}.auth-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}.auth-status{font-size:12px;color:#60758a;margin-top:12px;line-height:1.5}.userbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;color:#d9e8f5;font-size:12px}
+
+/* AFAQ Logistics brand identity */
+:root{--navy:#111318;--blue:#e51d3e;--light:#f5f6f8;--line:#e5e7eb;--text:#17191f;--muted:#687080;--green:#16845b;--orange:#c77716}
+header{background:linear-gradient(118deg,#111318 0%,#252832 62%,#c91535 100%);border-bottom:4px solid #ed1b3b}
+header:before{content:"";position:absolute;left:-110px;bottom:-170px;width:300px;height:300px;border:1px solid #ffffff18;border-radius:50%;box-shadow:0 0 0 28px #ffffff08,0 0 0 56px #ffffff05;pointer-events:none}
+.brand-lockup{display:flex;align-items:center;gap:18px;min-width:0}
+.brand-logo{width:178px;height:102px;object-fit:contain;background:#fff;border-radius:13px;padding:4px 9px;box-shadow:0 8px 22px #0003;flex:0 0 auto}
+.brand-copy h1{color:#fff;font-size:clamp(21px,2.5vw,28px);letter-spacing:.1px}
+.brand-copy .sub{color:#f2dce1}
+nav button.active,nav button:hover{color:#a70f2b}
+nav button{border-color:#ffffff35}
+.btn{background:linear-gradient(135deg,#c91535,#f02b4b)}
+.btn:hover{box-shadow:0 7px 16px #c9153535}
+.btn.secondary{background:#f2f3f5;color:#292d35;border-color:#e0e2e6}
+.card:before{background:linear-gradient(180deg,#ed1b3b,#ff8295)}
+.metric{color:#17191f}
+.auth-card{border:1px solid #f0d5da;box-shadow:0 25px 80px #00172c66}
+.auth-logo-wrap{text-align:center;margin:-2px 0 12px}
+.auth-logo{width:min(250px,85%);height:130px;object-fit:contain}
+@media(max-width:600px){.brand-lockup{gap:10px}.brand-logo{width:116px;height:76px;padding:3px 5px}.brand-copy h1{font-size:18px}.brand-copy .sub{font-size:11px}}
+
+
+/* Vehicle workshop atmosphere: graphite floor, subtle tyre-track texture and service-bay lighting */
+body{
+ background-color:#e8ebef;
+ background-image:
+  radial-gradient(ellipse at 50% -8%,rgba(229,29,62,.13),transparent 34%),
+  radial-gradient(ellipse at 100% 28%,rgba(38,49,63,.10),transparent 32%),
+  repeating-linear-gradient(135deg,rgba(25,31,40,.025) 0,rgba(25,31,40,.025) 2px,transparent 2px,transparent 18px),
+  linear-gradient(180deg,#f4f5f7 0%,#e7eaee 48%,#f1f2f4 100%);
+ background-attachment:fixed;
+}
+main{position:relative}
+main:before{content:"";position:fixed;z-index:-1;pointer-events:none;left:0;right:0;bottom:0;height:30vh;opacity:.24;background:repeating-linear-gradient(90deg,transparent 0,transparent 78px,rgba(36,43,52,.08) 79px,transparent 81px),linear-gradient(180deg,transparent,rgba(32,38,47,.06));}
+header{background:linear-gradient(115deg,#11151b 0%,#292e37 54%,#a91430 100%);}
+header:after{border-color:#ffffff20;box-shadow:0 0 0 35px #ffffff0a,0 0 0 70px #ffffff07,0 0 0 105px #ffffff04;}
+.card,.panel{backdrop-filter:blur(3px);}
+.panel{background:rgba(255,255,255,.97)}
+.vehicle{background:linear-gradient(150deg,#fff 0%,#f8f9fb 100%);border-bottom:3px solid #d91c3b}
+ .daily-unfit{display:flex;align-items:center;justify-content:space-between;gap:12px;font-weight:700}.daily-status{padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#fff;font-weight:700}.daily-tyre-positions{display:none;grid-column:1/-1}.daily-tyre-positions.show{display:block}.daily-choice-group{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.daily-choice{display:inline-flex;align-items:center;gap:5px;background:#f3f6fa;border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-weight:700}.daily-choice input{width:auto;margin:0}.daily-choice.unfit-choice{color:#b42332}.daily-choice.fit-choice{color:#16845b} </style>
+</head>
+<body>
+<div id="authGate">
+ <div class="auth-card">
+  <h2>AFAQ Vehicle Maintenance</h2><p class="muted">Secure cloud login — apna account login karein ya naya account banayein.</p>
+  <div class="field"><label>Email</label><input id="authEmail" type="email" autocomplete="username" placeholder="name@example.com"></div>
+  <div class="field"><label>Password</label><input id="authPassword" type="password" autocomplete="current-password" placeholder="At least 6 characters"></div>
+  <div class="auth-actions"><button class="btn" id="loginBtn" type="button">Login</button><button class="btn secondary" id="signupBtn" type="button">Create Account</button></div>
+  <div class="auth-status" id="authMessage">Supabase account ke zariye data cloud mein save hoga. Pehle SQL setup complete hona zaroori hai.</div>
+ </div>
+</div>
+<header>
+ <div class="head"><div class="brand-lockup"><img class="brand-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAV4AAAEYCAIAAACbSAk8AAAe1klEQVR42u2dB5QUVdqGx7gGFtOakCCYXUywCoKLKCIKor85ILCCsCCoCArqCqICgigqigQDShBRl+waMKFgxMCKCYwgk4fJTJ7536HZnp4OVbeqenq6h+c5fTzYU135vvfe734hqQoAIIQkbgEAIA0AgDQAANIAAEgDACANAIA0AADSAABIAwAgDQCANAAA0gAASAMAIA0AAEgDACANAIA0AADSAABIAwAgDQCANAAA0gAASAMAIA0AgDQAANIAAEgDACANAABIAwAgDQCANAAA0gAASAMAIA0AgDQAANIAAEgDACANAIA0AADSAABIAwAA0gAASAMAIA0AgDQAANIAAEgDACANAIA0AADSAABIAwAgDQCANAAA0gAASAMAANIAAEgDACANAIA0AADSAABIAwAgDQCANAAA0gAASAMAIA0AgDQAANIAAIA0AADSAABIAwAgDQCANAAA0gAASAMAIA0AgDQAANIAAEgDACANAIA0AADSAACANAAA0gAASAMAIA0AgDQAANLQ8Ni2He4DIA1QQ1lZ2YoVK5YsWcKtAKQBahg1alRKSkrfvn25FYA0wA5eeOGFoUOH6h8tW7bMyMjghgDSAFWfffZZ48aNf/zxx5KSkqOPPnr69OncE0AadnY0iWjatOmAAQMmTJgwZcqU1q1bd+rUidsCSMNOjYYJZ5111u677/7TTz899thja9eubdu27a677rpp0yZuDiANOy+DBg1KSkrq06eP/5uOHTvqm8mTJ3NzAGnYSZk5c6ZUQGOE77//3v9lly5d9GWbNm24P4A07IysWbNmzz33lApcffXV+t9Vq1ZpkUL/6N69e9J2fvjhB+4SIA07F3/88cdhhx2m9r/LLrusW7dO39xzzz2+hYnLLrvMJw1jxozhRgHSsBNRXFzcrl07X/u/5JJLfF8WFhYWFBToH9ddd53vT8cee2wUD1qZm8+dB6QhrrnhhhuS/sfnn38e9Nd+/fpZ/NUNpWV546cVzn6FOw9IQ/zyxBNP+Fv+BRdc4Pty69at69ev9/178ODB/g2GDx/u8XBl321M73L9lsPblf/CaiggDfHK+++/v8cee/hbviyRvu9feukln5e0uO222/wbHHHEERUVFS4PVlGR/8QLyS3Oki6ktb+M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" alt="AFAQ Logistics logo"><div class="brand-copy"><h1>AFAQ Vehicle Maintenance</h1><div class="sub">Fleet records • Service history • Expenses</div></div></div><div class="userbar"><span class="demo" id="cloudStatus">SUPABASE CONNECTED</span><span id="signedInEmail"></span><button class="btn secondary" id="logoutBtn" type="button">Logout</button></div></div>
+ <nav>
+  <button class="active" data-tab="dashboard">Dashboard</button>
+  <button data-tab="vehicles">Vehicles</button>
+  <button data-tab="maintenance">Add Maintenance</button>
+  <button data-tab="dailyCheck">Daily Check</button>
+  <button data-tab="installments">Vehicle Installment</button>
+  <button data-tab="trips">Dubai Trips</button>
+  <button data-tab="reports">Reports</button>
+ </nav>
+</header>
+<main>
+ <section id="dashboard">
+  <div class="cards">
+   <div class="card"><small>Vehicle Slots</small><div class="metric" id="countVehicles">0 / 25</div></div>
+   <div class="card"><small>Maintenance Entries</small><div class="metric" id="countJobs">0</div></div>
+   <div class="card"><small>Total Maintenance Cost</small><div class="metric" id="totalCost">0.000 OMR</div></div>
+   <div class="card"><small>Dubai Oil Change Due (15 Trips)</small><div class="metric" id="upcoming">0</div></div>
+   <div class="card"><small>Oman Oil Change Due (2 Months)</small><div class="metric" id="omanDue">0</div></div>
+ </div>
+
+ <div class="notice" id="cloudNotice">Cloud sync active: saved records are linked to your secure account. Keep your login details safe.</div>
+ <div class="panel"><h2>Recent Maintenance</h2><div class="tablewrap"><table><thead><tr><th>Date</th><th>Vehicle</th><th>Work Type</th><th>Details</th><th>Cost (OMR)</th></tr></thead><tbody id="recentRows"></tbody></table></div></div>
+ <div class="panel"><h2>Vehicles</h2><div id="dashVehicles" class="vehicle-grid"></div></div>
+ </section>
+
+ <section id="vehicles" class="hidden">
+  <div class="panel">
+   <div class="toolbar"><div><h2 style="margin:0">Vehicle List</h2><div class="muted">Add vehicle numbers whenever you are ready. Up to 25 vehicles in this demo.</div></div><button class="btn" onclick="showAddVehicle()">+ Add Vehicle</button></div>
+   <div id="vehicleList" class="vehicle-grid"></div>
+  </div>
+ </section>
+
+ <section id="maintenance" class="hidden">
+  <div class="panel">
+   <h2>Add Maintenance Record</h2>
+   <form id="maintenanceForm">
+    <div class="formgrid">
+     <div class="field"><label>Vehicle</label><select id="mVehicle" required></select></div>
+     <div class="field"><label>Date</label><input id="mDate" type="date" required></div>
+     <div class="field"><label>Current KM</label><input id="mKm" type="number" min="0" placeholder="e.g. 125000"></div>
+     <div class="field"><label>Maintenance Type</label><select id="mType" required><option value="">Select maintenance</option><option>Oil Change</option><option>Other Maintenance</option><option>Tyre Change</option></select></div>
+     <div class="field" id="otherWorkWrap" style="display:none"><label>Other Maintenance Details</label><input id="mOtherWork" placeholder="e.g. Brake, battery, engine repair"></div>
+     <div class="field" id="tyrePositionWrap" style="grid-column:1/-1;display:none"><label>Tyre Position (select one or more)</label><div class="tyre-layout"><div><b>LEFT SIDE</b><div class="tyre-options"><label><input type="checkbox" name="tyrePosition" value="L1"> L1</label><label><input type="checkbox" name="tyrePosition" value="L2"> L2</label><label><input type="checkbox" name="tyrePosition" value="L3"> L3</label><label><input type="checkbox" name="tyrePosition" value="L4"> L4</label><label><input type="checkbox" name="tyrePosition" value="L5"> L5</label></div></div><div><b>RIGHT SIDE</b><div class="tyre-options"><label><input type="checkbox" name="tyrePosition" value="R1"> R1</label><label><input type="checkbox" name="tyrePosition" value="R2"> R2</label><label><input type="checkbox" name="tyrePosition" value="R3"> R3</label><label><input type="checkbox" name="tyrePosition" value="R4"> R4</label><label><input type="checkbox" name="tyrePosition" value="R5"> R5</label></div></div></div></div>
+     <div class="field"><label>Garage / Workshop</label><input id="mGarage" placeholder="Garage name"></div>
+     <div class="field"><label>Cost (OMR)</label><input id="mCost" type="number" min="0" step="0.001" placeholder="0.000"></div>
+     <div class="field"><label>Bill / Reference No.</label><input id="mBill" placeholder="Optional"></div>
+     <div class="field" style="grid-column:1/-1"><label>Upload Bill Photos (Select Multiple)</label><input id="mBillPhoto" type="file" accept="image/*" multiple><div id="billPhotoPreview" class="bill-preview muted">No bill photos selected</div><small class="muted">Aap ek saath jitni chahein bill photos select kar sakte hain. Photos compress hokar save hongi.</small></div>
+    </div>
+    <div class="field" style="margin-top:12px"><label>Details / Notes</label><textarea id="mNotes" rows="3" placeholder="Work completed, parts changed, etc."></textarea></div>
+    <div style="margin-top:14px"><button class="btn green" type="submit">Save Maintenance</button></div>
+   </form>
+  </div>
+ </section>
+
+ <section id="dailyCheck" class="hidden">
+  <div class="panel" style="max-width:850px;margin:auto">
+   <h2>Daily Vehicle Check</h2>
+   <p class="muted">Vehicle select karein, driver apna naam likhe aur tamam items check karke save kare.</p>
+   <form id="dailyCheckForm">
+    <div class="formgrid">
+     <div class="field"><label>Vehicle</label><select id="dcVehicle" required></select></div>
+     <div class="field"><label>Check Date</label><input id="dcDate" type="date" required></div>
+     <div class="field"><label>Driver Name</label><input id="dcDriver" required placeholder="Driver apna naam likhein"></div>
+    </div>
+    <p class="muted" style="margin:18px 0 8px"><b>Daily inspection:</b> FIT ya UNFIT ke saamne tick (✓) karein.</p>
+    <div class="checklist" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:10px 0 18px">
+     <div class="card daily-unfit"><span>1. Tyre</span><div class="daily-choice-group"><label class="daily-choice fit-choice"><input type="checkbox" class="daily-choice-input" data-item="Tyre" value="FIT" checked> FIT</label><label class="daily-choice unfit-choice"><input type="checkbox" class="daily-choice-input" data-item="Tyre" value="UNFIT"> UNFIT</label></div></div>
+     <div class="daily-tyre-positions" id="dcTyrePositions"><b>UNFIT Tyre Position — tick affected tyre(s)</b><div class="tyre-layout"><div><b>RIGHT SIDE</b><div class="tyre-options"><label><input type="checkbox" name="dcTyrePosition" value="R1"> R1</label><label><input type="checkbox" name="dcTyrePosition" value="R2"> R2</label><label><input type="checkbox" name="dcTyrePosition" value="R3"> R3</label><label><input type="checkbox" name="dcTyrePosition" value="R4"> R4</label><label><input type="checkbox" name="dcTyrePosition" value="R5"> R5</label></div></div><div><b>LEFT SIDE</b><div class="tyre-options"><label><input type="checkbox" name="dcTyrePosition" value="L1"> L1</label><label><input type="checkbox" name="dcTyrePosition" value="L2"> L2</label><label><input type="checkbox" name="dcTyrePosition" value="L3"> L3</label><label><input type="checkbox" name="dcTyrePosition" value="L4"> L4</label><label><input type="checkbox" name="dcTyrePosition" value="L5"> L5</label></div></div></div></div>
+     <div class="card daily-unfit"><span>2. Oil</span><div class="daily-choice-group"><label class="daily-choice fit-choice"><input type="checkbox" class="daily-choice-input" data-item="Oil" value="FIT" checked> FIT</label><label class="daily-choice unfit-choice"><input type="checkbox" class="daily-choice-input" data-item="Oil" value="UNFIT"> UNFIT</label></div></div>
+     <div class="card daily-unfit"><span>3. Water Radiator</span><div class="daily-choice-group"><label class="daily-choice fit-choice"><input type="checkbox" class="daily-choice-input" data-item="Water Radiator" value="FIT" checked> FIT</label><label class="daily-choice unfit-choice"><input type="checkbox" class="daily-choice-input" data-item="Water Radiator" value="UNFIT"> UNFIT</label></div></div>
+     <div class="card daily-unfit"><span>4. Brakes</span><div class="daily-choice-group"><label class="daily-choice fit-choice"><input type="checkbox" class="daily-choice-input" data-item="Brakes" value="FIT" checked> FIT</label><label class="daily-choice unfit-choice"><input type="checkbox" class="daily-choice-input" data-item="Brakes" value="UNFIT"> UNFIT</label></div></div>
+     <div class="card daily-unfit"><span>5. Truck Body</span><div class="daily-choice-group"><label class="daily-choice fit-choice"><input type="checkbox" class="daily-choice-input" data-item="Truck Body" value="FIT" checked> FIT</label><label class="daily-choice unfit-choice"><input type="checkbox" class="daily-choice-input" data-item="Truck Body" value="UNFIT"> UNFIT</label></div></div>
+    </div>
+    <div class="field"><label>Remarks (optional)</label><textarea id="dcRemarks" rows="2" placeholder="Agar koi problem ho to likhein"></textarea></div>
+    <button class="btn green" type="submit">Save Daily Check</button>
+   </form>
+  </div>
+  <div class="panel">
+   <div class="toolbar"><div><h2 style="margin:0">Daily Check Report</h2><div class="muted">Saved daily inspections with driver and vehicle details.</div></div><div class="actions"><button class="btn" onclick="downloadDailyChecks()">Download Report (CSV)</button><button class="btn secondary" onclick="window.print()">Print / Save PDF</button></div></div>
+   <div class="tablewrap"><table><thead><tr><th>Date</th><th>Vehicle</th><th>Driver</th><th>Tyre</th><th>Oil</th><th>Water Radiator</th><th>Brakes</th><th>Truck Body</th><th>Remarks</th></tr></thead><tbody id="dailyCheckRows"></tbody></table></div>
+  </div>
+ </section>
+
+ <section id="installments" class="hidden">
+  <div class="panel">
+   <h2>Vehicle Installment Plan</h2>
+   <p class="muted">Vehicle ki installment details ek dafa save karein. Har payment alag record hogi aur balance automatically update hoga.</p>
+   <form id="installmentPlanForm">
+    <div class="formgrid">
+     <div class="field"><label>Vehicle</label><select id="iVehicle" required></select></div>
+     <div class="field"><label>Finance Company / Bank</label><input id="iFinance" placeholder="Bank / finance company"></div>
+     <div class="field"><label>Total Vehicle Price (OMR)</label><input id="iTotal" type="number" min="0.001" step="0.001" required></div>
+     <div class="field"><label>Down Payment (OMR)</label><input id="iDown" type="number" min="0" step="0.001" value="0"></div>
+     <div class="field"><label>Monthly Installment (OMR)</label><input id="iMonthly" type="number" min="0.001" step="0.001" required></div>
+     <div class="field"><label>First / Next Due Date</label><input id="iDue" type="date" required></div>
+     <div class="field"><label>Agreement / Reference No.</label><input id="iRef" placeholder="Optional"></div>
+    </div>
+    <div style="margin-top:14px"><button class="btn green" type="submit">Save Installment Plan</button></div>
+   </form>
+  </div>
+  <div class="panel">
+   <h2>Record Installment Payment</h2>
+   <form id="installmentPaymentForm">
+    <div class="formgrid">
+     <div class="field"><label>Vehicle / Plan</label><select id="ipPlan" required></select></div>
+     <div class="field"><label>Payment Date</label><input id="ipDate" type="date" required></div>
+     <div class="field"><label>Paid Amount (OMR)</label><input id="ipAmount" type="number" min="0.001" step="0.001" required></div>
+     <div class="field"><label>Receipt / Reference</label><input id="ipRef" placeholder="Optional"></div>
+     <div class="field" style="grid-column:1/-1"><label>Notes</label><input id="ipNotes" placeholder="Optional"></div>
+    </div>
+    <div style="margin-top:14px"><button class="btn green" type="submit">Save Payment</button></div>
+   </form>
+  </div>
+  <div class="panel">
+   <div class="toolbar"><div><h2 style="margin:0">Installment Report</h2><div class="muted">Total price, down payment, paid amount, remaining balance and next due date.</div></div><div class="actions"><button class="btn" onclick="downloadInstallments()">Download Report (CSV)</button><button class="btn secondary" onclick="window.print()">Print / Save PDF</button></div></div>
+   <div class="tablewrap"><table><thead><tr><th>Vehicle</th><th>Finance</th><th>Total Price</th><th>Down Payment</th><th>Monthly</th><th>Paid</th><th>Balance</th><th>Next Due</th><th>Status</th></tr></thead><tbody id="installmentRows"></tbody></table></div>
+  </div>
+  <div class="panel"><h2>Payment History</h2><div class="tablewrap"><table><thead><tr><th>Date</th><th>Vehicle</th><th>Amount OMR</th><th>Receipt / Ref</th><th>Notes</th></tr></thead><tbody id="installmentPaymentRows"></tbody></table></div></div>
+ </section>
+
+ <section id="trips" class="hidden">
+  <div class="panel">
+   <h2>Record Dubai Vehicle Trip</h2>
+   <p class="muted">Har trip ke start aur end KM meter enter karein. End KM save hone par trip automatically count hoga. 15 trips ke baad oil change due ho jayega.</p>
+   <form id="tripForm">
+    <div class="formgrid">
+     <div class="field"><label>Dubai Vehicle</label><select id="tVehicle" required></select></div>
+     <div class="field"><label>Trip Date</label><input id="tDate" type="date" required></div>
+     <div class="field"><label>Starting KM Meter</label><input id="tStartKm" type="number" min="0" step="1" required placeholder="e.g. 125000"></div>
+     <div class="field"><label>Ending KM Meter</label><input id="tEndKm" type="number" min="0" step="1" required placeholder="e.g. 125450"></div>
+    </div>
+    <div style="margin-top:14px"><button class="btn green" type="submit">Save Trip & Count</button></div>
+   </form>
+  </div>
+  <div class="panel"><div class="toolbar"><h2>Dubai Trip History</h2><div class="field" style="min-width:220px"><label>Show Trip Record For</label><select id="tripHistoryVehicle"><option value="">Select vehicle</option></select></div></div><div class="tablewrap"><table><thead><tr><th>Date</th><th>Vehicle</th><th>Start KM</th><th>End KM</th><th>KM Travelled</th><th>Trip No. After Oil</th></tr></thead><tbody id="tripRows"></tbody></table></div></div>
+ </section>
+
+ <section id="reports" class="hidden">
+  <div class="panel">
+   <div class="toolbar"><div><h2 style="margin:0">Maintenance Report</h2><div class="muted">Download the records currently saved in this demo.</div></div><div class="actions"><button class="btn" onclick="downloadCSV()">Download Excel (CSV)</button><button class="btn secondary" onclick="window.print()">Print / Save PDF</button></div></div>
+   <div class="tablewrap"><table><thead><tr><th>Date</th><th>Vehicle</th><th>KM</th><th>Work Type</th><th>Tyre Position</th><th>Garage</th><th>Cost OMR</th></tr></thead><tbody id="reportRows"></tbody></table></div>
+  </div>
+ </section>
+
+ <section id="addVehicle" class="hidden">
+  <div class="panel" style="max-width:650px;margin:auto">
+   <div class="toolbar"><h2 style="margin:0">Add New Vehicle</h2><button class="btn secondary" onclick="go('vehicles')">Back</button></div>
+   <form id="vehicleForm">
+    <div class="formgrid">
+     <div class="field"><label>Vehicle Group</label><select id="vGroup" required><option value="Oman">Oman</option><option value="Dubai">Dubai</option></select></div>
+     <div class="field"><label>Vehicle Number</label><input id="vNumber" placeholder="e.g. 12345" required></div>
+     <div class="field"><label>Model Number</label><input id="vModel" placeholder="Enter model number"></div>
+     <div class="field"><label>Driver Name</label><input id="vDriver" placeholder="Driver name"></div>
+     <div class="field"><label>Current KM</label><input id="vKm" type="number" min="0" placeholder="Current odometer"></div>
+     <div class="field"><label>Insurance Expiry</label><input id="vInsurance" type="date"></div>
+     <div class="field"><label>Registration Expiry</label><input id="vRegistration" type="date"></div>
+    </div>
+    <div class="doc-grid">
+     <div class="doc-card"><label>Upload Insurance Photo</label><input id="vInsurancePhoto" type="file" accept="image/*"><div id="vInsurancePhotoPreview" class="doc-preview muted">No photo selected</div></div>
+     <div class="doc-card"><label>Upload Registration — Front</label><input id="vRegFront" type="file" accept="image/*"><div id="vRegFrontPreview" class="doc-preview muted">No photo selected</div></div>
+     <div class="doc-card"><label>Upload Registration — Back</label><input id="vRegBack" type="file" accept="image/*"><div id="vRegBackPreview" class="doc-preview muted">No photo selected</div></div>
+     <div class="doc-card"><label>Upload Vehicle Picture</label><input id="vVehiclePhoto" type="file" accept="image/*"><div id="vVehiclePhotoPreview" class="doc-preview muted">No photo selected</div></div>
+    </div>
+    <p class="muted">Photos will be saved with this vehicle record in this browser on this device.</p>
+    <div style="margin-top:14px"><button class="btn green" type="submit">Save Vehicle</button></div>
+   </form>
+  </div>
+ </section>
+
+ <section id="vehicleDetail" class="hidden">
+  <div class="panel">
+   <div class="detailtop"><div><h2 id="detailTitle" style="margin:0 0 5px">Vehicle</h2><div id="detailMeta" class="muted"></div></div><button class="btn secondary" onclick="go('vehicles')">Back to Vehicles</button></div>
+   <div id="vehicleDocs" class="doc-grid" style="margin-top:18px"></div>
+   <div style="margin-top:18px"><h2>Maintenance History</h2><div class="tablewrap"><table><thead><tr><th>Date</th><th>KM</th><th>Work</th><th>Tyre Position</th><th>Garage</th><th>Cost OMR</th><th>Bill</th><th>Notes</th><th>Action</th></tr></thead><tbody id="detailRows"></tbody></table></div></div>
+  </div>
+ </section>
+</main>
+<div id="imageViewer" class="hidden" style="position:fixed;inset:0;z-index:9999;background:#071421eF;display:none;align-items:center;justify-content:center;padding:18px" onclick="closeImageViewer()">
+ <div style="max-width:min(100%,1000px);max-height:95vh;position:relative" onclick="event.stopPropagation()">
+  <button class="btn" style="position:absolute;right:8px;top:8px;z-index:2" onclick="closeImageViewer()">✕ Close</button>
+  <img id="viewerImage" alt="Uploaded photo" style="display:block;max-width:100%;max-height:90vh;object-fit:contain;border-radius:12px;background:white">
+ </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL="https://jkhjfzevhgxjgqegqyjg.supabase.co";
+const SUPABASE_ANON_KEY="sb_publishable_kLsIrxXPsyxJrTvdKO87qA_WW9QOvFH";
+const supabaseClient=window.supabase?.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+let currentUser=null, cloudSaveTimer=null, isLoadingCloud=false, editingVehicleId=null, editingJobId=null, selectedTripVehicleId="";
+const KEY='afaq_vehicle_demo_v1';
+let data=JSON.parse(localStorage.getItem(KEY)||'{"vehicles":[],"jobs":[],"trips":[],"dailyChecks":[]}');
+data.trips=data.trips||[];data.dailyChecks=data.dailyChecks||[];data.installments=data.installments||[];data.installmentPayments=data.installmentPayments||[];
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money=n=>(Number(n)||0).toFixed(3);
+function save(){localStorage.setItem(KEY,JSON.stringify(data));render();if(currentUser&&!isLoadingCloud){clearTimeout(cloudSaveTimer);cloudSaveTimer=setTimeout(syncCloud,700)}}
+async function syncCloud(){if(!currentUser||!supabaseClient)return;const status=$('cloudStatus');try{status.textContent='SYNCING…';const {error}=await supabaseClient.from('vehicle_maintenance_store').upsert({user_id:currentUser.id,data,updated_at:new Date().toISOString()},{onConflict:'user_id'});if(error)throw error;status.textContent='CLOUD SAVED';}catch(e){status.textContent='SYNC ERROR';$('cloudNotice').textContent='Cloud save error: '+(e.message||'Please check Supabase SQL setup and internet.');console.error(e)}}
+async function loadCloud(){if(!currentUser)return;isLoadingCloud=true;try{const {data:row,error}=await supabaseClient.from('vehicle_maintenance_store').select('data').eq('user_id',currentUser.id).maybeSingle();if(error)throw error;if(row&&row.data){data={...data,...row.data};localStorage.setItem(KEY,JSON.stringify(data));}else{const local=JSON.parse(localStorage.getItem(KEY)||'null');if(local){data={...data,...local};await syncCloud();}}}catch(e){$('cloudNotice').textContent='Supabase table/RLS setup required: '+e.message;throw e}finally{isLoadingCloud=false}}
+function showAuth(message){$('authGate').style.display='flex';if(message)$('authMessage').textContent=message}
+async function finishLogin(session){currentUser=session.user;$('signedInEmail').textContent=currentUser.email||'';$('authGate').style.display='none';try{await loadCloud();render();$('cloudStatus').textContent='CLOUD SAVED';}catch(e){showAuth('Supabase database setup abhi complete nahi. Supabase SQL Editor mein app ke SQL setup ko run karein. Error: '+e.message)}}
+async function doAuth(mode){if(!supabaseClient){showAuth('Supabase library load nahi hui. Internet connection check karein.');return}const email=$('authEmail').value.trim(),password=$('authPassword').value;if(!email||!password){$('authMessage').textContent='Email aur password enter karein.';return}if(password.length<6){$('authMessage').textContent='Password kam az kam 6 characters ka hona chahiye.';return}const btn=mode==='login'?'loginBtn':'signupBtn';$(btn).disabled=true;$('authMessage').textContent='Please wait…';try{const result=mode==='login'?await supabaseClient.auth.signInWithPassword({email,password}):await supabaseClient.auth.signUp({email,password});if(result.error)throw result.error;if(result.data.session)await finishLogin(result.data.session);else $('authMessage').textContent='Account create ho gaya. Email confirmation link check karein, phir login karein.';}catch(e){$('authMessage').textContent=e.message||'Login failed.'}finally{$(btn).disabled=false}}
+$('loginBtn').onclick=()=>doAuth('login');$('signupBtn').onclick=()=>doAuth('signup');$('logoutBtn').onclick=async()=>{await supabaseClient.auth.signOut();currentUser=null;showAuth('You have been logged out.')};
+function clearAllData(){
+ if(!confirm('ALL CLEAR: Kya aap waqai tamam app data delete karna chahte hain? Vehicles, photos, maintenance history, daily checks, Dubai trips aur installments sab permanently delete ho jayenge.'))return;
+ try{localStorage.removeItem(KEY);}catch(e){alert('Data delete nahi ho saka: '+e.message);return;}
+ data={vehicles:[],jobs:[],trips:[],dailyChecks:[],installments:[],installmentPayments:[]};
+ save();go('dashboard');
+ alert('All Clear complete. Is app ka tamam saved data delete ho gaya hai.');
+}
+function addCalendarMonths(dateString, months){const [y,m,d]=dateString.split('-').map(Number);const target=new Date(y,m-1+months,1);const lastDay=new Date(target.getFullYear(),target.getMonth()+1,0).getDate();target.setDate(Math.min(d,lastDay));return `${target.getFullYear()}-${String(target.getMonth()+1).padStart(2,'0')}-${String(target.getDate()).padStart(2,'0')}`}
+function omanOilInfo(v){const latest=data.jobs.filter(j=>j.vehicleId===v.id&&j.type==='Oil Change').sort((a,b)=>b.date.localeCompare(a.date))[0];if(!latest)return {last:'',due:'',status:'OIL CHANGE DATE NOT SET'};const due=addCalendarMonths(latest.date,2);const today=new Date();const todayStr=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;return {last:latest.date,due,status:todayStr>=due?'OIL CHANGE DUE':`DUE ON ${due}`}}
+
+function go(tab){document.querySelectorAll('main>section').forEach(s=>s.classList.add('hidden'));$(tab).classList.remove('hidden');document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>go(b.dataset.tab));
+function showAddVehicle(){if(data.vehicles.length>=25){alert('Demo limit is 25 vehicles.');return}editingVehicleId=null;$('vehicleForm').reset();$('addVehicle').querySelector('h2').textContent='Add New Vehicle';$('vehicleForm').querySelector('button[type=submit]').textContent='Save Vehicle';go('addVehicle')}
+function editVehicle(id){const v=data.vehicles.find(x=>x.id===id);if(!v)return;editingVehicleId=id;$('vGroup').value=v.group||'Oman';$('vNumber').value=v.number||'';$('vModel').value=v.model||'';$('vDriver').value=v.driver||'';$('vKm').value=v.km||'';$('vInsurance').value=v.insurance||'';$('vRegistration').value=v.registration||'';[['vInsurancePhotoPreview',v.insurancePhoto],['vRegFrontPreview',v.registrationFrontPhoto],['vRegBackPreview',v.registrationBackPhoto],['vVehiclePhotoPreview',v.vehiclePhoto]].forEach(([id,src])=>{$(id).innerHTML=src?`<img src="${src}" alt="Saved photo"><button type="button" class="btn secondary" onclick="viewImage('${src}')">View</button>`:'No photo selected'});$('addVehicle').querySelector('h2').textContent='Edit Vehicle';$('vehicleForm').querySelector('button[type=submit]').textContent='Update Vehicle';go('addVehicle')} 
+function viewImage(src){if(!src)return;$('viewerImage').src=src;$('imageViewer').style.display='flex';$('imageViewer').classList.remove('hidden')}
+function closeImageViewer(){$('imageViewer').style.display='none';$('imageViewer').classList.add('hidden');$('viewerImage').src=''}
+function keepTripVehicleId(id){return id}
+function renderTripHistory(){const id=selectedTripVehicleId||$('tripHistoryVehicle')?.value||'';const rows=data.trips.filter(t=>id&&t.vehicleId===id).slice().sort((a,b)=>b.date.localeCompare(a.date)).map(t=>{const v=data.vehicles.find(x=>x.id===t.vehicleId);return `<tr><td>${esc(t.date)}</td><td>${esc(v?.number||'Deleted')}</td><td>${esc(t.startKm)}</td><td>${esc(t.endKm)}</td><td>${Number(t.endKm)-Number(t.startKm)}</td><td>${esc(t.tripNo)}</td></tr>`}).join('');$('tripRows').innerHTML=id?(rows||'<tr><td colspan="6" class="empty">No trips recorded for this vehicle.</td></tr>'):'<tr><td colspan="6" class="empty">Select a vehicle to view its trip history.</td></tr>'}
+function render(){
+ const keepTripVehicle=$('tVehicle')?.value||selectedTripVehicleId||'';
+ const keepTripHistoryVehicle=$('tripHistoryVehicle')?.value||selectedTripVehicleId||'';
+ const jobs=data.jobs.slice().sort((a,b)=>b.date.localeCompare(a.date));
+ $('countVehicles').textContent=`${data.vehicles.length} / 25`;
+ $('countJobs').textContent=data.jobs.length;
+ $('totalCost').textContent=money(data.jobs.reduce((s,j)=>s+Number(j.cost||0),0))+' OMR';
+ $('upcoming').textContent=data.vehicles.filter(v=>v.group==='Dubai'&&Number(v.tripsSinceOil||0)>=15).length;
+ $('omanDue').textContent=data.vehicles.filter(v=>v.group==='Oman'&&omanOilInfo(v).status==='OIL CHANGE DUE').length;
+ const cards=data.vehicles.map(v=>{const trips=Number(v.tripsSinceOil||0);const due=v.group==='Dubai'&&trips>=15;const avatar=v.vehiclePhoto?`<img class="vehicle-avatar" src="${v.vehiclePhoto}" alt="${esc(v.number)} truck photo">`:`<div class="vehicle-avatar-placeholder" aria-label="No truck photo">🚚</div>`;return `<div class="vehicle"><div class="vehicle-head">${avatar}<div><strong>${esc(v.number)}</strong><p>${esc(v.group||'Oman')} Group • ${esc(v.model||'Vehicle')} • ${esc(v.driver||'No driver assigned')}</p></div></div>${v.group==='Dubai'?`<p><b>Trips since oil change:</b> ${trips} / 15</p><span class="tag" style="${due?'background:#fde8e8;color:#a93232':''}">${due?'OIL CHANGE DUE':`${15-trips} trips until oil change`}</span><div style="margin-top:10px"><button class="btn" onclick="openTripFor('${v.id}')">Record Trip (KM)</button></div>`:(()=>{const oi=omanOilInfo(v);const overdue=oi.status==='OIL CHANGE DUE';return `<p><b>Last Oil Change:</b> ${oi.last||'Not recorded'}</p><p><b>Next Due:</b> ${oi.due||'After first oil change entry'}</p><span class="tag" style="${overdue?'background:#fde8e8;color:#a93232':''}">${oi.status}</span>`})()}<div style="margin-top:12px"><button class="btn secondary" onclick="openVehicle('${v.id}')">View History</button> <button class="btn" onclick="editVehicle('${v.id}')">Edit Vehicle</button></div></div>`}).join('');
+ $('vehicleList').innerHTML=cards||'<div class="empty">No vehicles added yet. Add your first vehicle when ready.</div>';
+ $('dashVehicles').innerHTML=cards||'<div class="empty">No vehicles added yet.</div>';
+ $('mVehicle').innerHTML='<option value="">Select vehicle</option>'+data.vehicles.map(v=>`<option value="${v.id}">${esc(v.number)} — ${esc(v.model||'Vehicle')}</option>`).join('');
+ $('tVehicle').innerHTML='<option value="">Select Dubai vehicle</option>'+data.vehicles.filter(v=>v.group==='Dubai').map(v=>`<option value="${v.id}">${esc(v.number)} — ${esc(v.model||'Vehicle')}</option>`).join('');
+ $('tripHistoryVehicle').innerHTML='<option value="">Select vehicle</option>'+data.vehicles.filter(v=>v.group==='Dubai').map(v=>`<option value="${v.id}">${esc(v.number)} — ${esc(v.model||'Vehicle')}</option>`).join('');
+ selectedTripVehicleId=data.vehicles.some(v=>v.id===keepTripVehicle&&v.group==='Dubai')?keepTripVehicleId(keepTripVehicle):'';
+ $('tVehicle').value=selectedTripVehicleId;
+ $('tripHistoryVehicle').value=selectedTripVehicleId;
+ $('dcVehicle').innerHTML='<option value="">Select vehicle</option>'+data.vehicles.map(v=>`<option value="${v.id}">${esc(v.number)} — ${esc(v.group||'Oman')}</option>`).join('');
+ $('iVehicle').innerHTML='<option value="">Select vehicle</option>'+data.vehicles.map(v=>`<option value="${v.id}">${esc(v.number)}</option>`).join('');
+ $('ipPlan').innerHTML='<option value="">Select vehicle plan</option>'+data.installments.map(p=>{const v=data.vehicles.find(x=>x.id===p.vehicleId);return `<option value="${p.id}">${esc(v?.number||'Unknown vehicle')}</option>`}).join('');
+ const totalPaid=id=>data.installmentPayments.filter(p=>p.planId===id).reduce((a,p)=>a+Number(p.amount||0),0);
+ $('installmentRows').innerHTML=data.installments.map(p=>{const v=data.vehicles.find(x=>x.id===p.vehicleId),paid=totalPaid(p.id),balance=Math.max(0,Number(p.total)-Number(p.down||0)-paid),today=new Date().toISOString().slice(0,10),status=balance<=0?'PAID':(p.dueDate&&today>p.dueDate?'OVERDUE':'ACTIVE');return `<tr><td>${esc(v?.number||'-')}</td><td>${esc(p.finance||'-')}</td><td>${money(p.total)}</td><td>${money(p.down)}</td><td>${money(p.monthly)}</td><td>${money(paid)}</td><td><b>${money(balance)}</b></td><td>${esc(p.dueDate||'-')}</td><td>${status}</td></tr>`}).join('')||'<tr><td colspan="9" class="empty">No installment plans added.</td></tr>';
+ $('installmentPaymentRows').innerHTML=data.installmentPayments.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(p=>{const plan=data.installments.find(x=>x.id===p.planId),v=data.vehicles.find(x=>x.id===plan?.vehicleId);return `<tr><td>${esc(p.date)}</td><td>${esc(v?.number||'-')}</td><td>${money(p.amount)}</td><td>${esc(p.ref||'-')}</td><td>${esc(p.notes||'-')}</td></tr>`}).join('')||'<tr><td colspan="5" class="empty">No installment payments recorded.</td></tr>';
+ const checks=data.dailyChecks.slice().sort((a,b)=>b.date.localeCompare(a.date));$('dailyCheckRows').innerHTML=checks.map(c=>{const v=data.vehicles.find(x=>x.id===c.vehicleId);const status=x=>{const unfit=(c.unfitItems||[]).includes(x);return unfit?'<b style="color:#b42332">UNFIT</b>':'<b style="color:#16845b">FIT</b>'};const tyrePos=(c.tyreUnfitPositions||[]).length?' <small>('+c.tyreUnfitPositions.join(', ')+')</small>':'';return `<tr><td>${esc(c.date)}</td><td>${esc(v?.number||'Deleted')}</td><td>${esc(c.driver)}</td><td>${status('Tyre')}${tyrePos}</td><td>${status('Oil')}</td><td>${status('Water Radiator')}</td><td>${status('Brakes')}</td><td>${status('Truck Body')}</td><td>${esc(c.remarks||'-')}</td></tr>`}).join('')||'<tr><td colspan="9" class="empty">No daily checks saved yet.</td></tr>';
+ renderTripHistory();
+ const rows=jobs.map(j=>{let v=data.vehicles.find(x=>x.id===j.vehicleId);return `<tr><td>${esc(j.date)}</td><td>${esc(v?.number||'Deleted')}</td><td>${esc(j.type)}</td><td>${esc(j.notes||j.garage||'-')}</td><td>${money(j.cost)}</td></tr>`}).join('');
+ $('recentRows').innerHTML=rows||'<tr><td colspan="5" class="empty">No maintenance records yet.</td></tr>';
+ $('reportRows').innerHTML=jobs.map(j=>{let v=data.vehicles.find(x=>x.id===j.vehicleId);return `<tr><td>${esc(j.date)}</td><td>${esc(v?.number||'Deleted')}</td><td>${esc(j.km||'-')}</td><td>${esc(j.type==='Other Maintenance'?(j.otherWork||j.type):j.type)}</td><td>${esc((j.tyrePositions||[]).join(', ')||'-')}</td><td>${esc(j.garage||'-')}</td><td>${money(j.cost)}</td></tr>`}).join('')||'<tr><td colspan="7" class="empty">No records to show.</td></tr>';
+}
+$('dcDate').value=new Date().toISOString().slice(0,10);
+function updateTyrePositionVisibility(){const tyreUnfit=document.querySelector('#dailyCheckForm .daily-choice-input[data-item="Tyre"][value="UNFIT"]')?.checked;$('dcTyrePositions').classList.toggle('show',!!tyreUnfit)}
+document.querySelectorAll('.daily-choice-input').forEach(input=>input.addEventListener('change',()=>{const group=[...document.querySelectorAll('.daily-choice-input')].filter(x=>x.dataset.item===input.dataset.item);if(input.checked)group.forEach(x=>{if(x!==input)x.checked=false});else{const other=group.find(x=>x!==input);if(other)other.checked=true}updateTyrePositionVisibility()}));
+$('dailyCheckForm').onsubmit=e=>{e.preventDefault();const vehicleId=$('dcVehicle').value;const driver=$('dcDriver').value.trim();const names=['Tyre','Oil','Water Radiator','Brakes','Truck Body'];const unfitItems=names.filter(name=>document.querySelector(`#dailyCheckForm .daily-choice-input[data-item="${name}"][value="UNFIT"]`)?.checked);const tyreUnfitPositions=[...document.querySelectorAll('input[name="dcTyrePosition"]:checked')].map(x=>x.value);if(!vehicleId){alert('Please select a vehicle.');return}if(!driver){alert('Please enter driver name.');return}if(unfitItems.includes('Tyre')&&!tyreUnfitPositions.length){alert('Please tick which tyre is UNFIT (R1-R5 or L1-L5).');return}data.dailyChecks.push({id:crypto.randomUUID(),vehicleId,date:$('dcDate').value,driver,items:names,unfitItems,tyreUnfitPositions,remarks:$('dcRemarks').value.trim()});e.target.reset();document.querySelectorAll('.daily-choice-input').forEach(x=>{x.checked=x.value==='FIT'});document.querySelectorAll('input[name="dcTyrePosition"]').forEach(x=>x.checked=false);$('dcTyrePositions').classList.remove('show');$('dcDate').value=new Date().toISOString().slice(0,10);save();go('dailyCheck');alert('Daily vehicle check saved successfully.');};
+function downloadDailyChecks(){const head=['Date','Vehicle Number','Driver','Tyre Status','Unfit Tyre Positions','Oil','Water Radiator','Brakes','Truck Body','Remarks'];const items=['Tyre','Oil','Water Radiator','Brakes','Truck Body'];const lines=[head,...data.dailyChecks.map(c=>{const v=data.vehicles.find(x=>x.id===c.vehicleId);return [c.date,v?.number||'',c.driver,(c.unfitItems||[]).includes('Tyre')?'UNFIT':'FIT',(c.tyreUnfitPositions||[]).join(', '),...items.slice(1).map(x=>(c.unfitItems||[]).includes(x)?'UNFIT':'FIT'),c.remarks||'']})].map(row=>row.map(x=>'"'+String(x??'').replace(/"/g,'""')+'"').join(','));const blob=new Blob(['\ufeff'+lines.join('\r\n')],{type:'text/csv;charset=utf-8;'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='AFAQ_Daily_Vehicle_Check_Report.csv';a.click();URL.revokeObjectURL(a.href)}
+$('installmentPlanForm').onsubmit=e=>{e.preventDefault();const vehicleId=$('iVehicle').value;if(!vehicleId){alert('Please select a vehicle.');return}const existing=data.installments.find(p=>p.vehicleId===vehicleId);const plan={id:existing?.id||crypto.randomUUID(),vehicleId,finance:$('iFinance').value.trim(),total:Number($('iTotal').value),down:Number($('iDown').value||0),monthly:Number($('iMonthly').value),dueDate:$('iDue').value,ref:$('iRef').value.trim()};if(plan.down>plan.total){alert('Down payment cannot be greater than total vehicle price.');return}if(existing){if(!confirm('This vehicle already has an installment plan. Update its plan details?'))return;Object.assign(existing,plan)}else data.installments.push(plan);e.target.reset();save();go('installments');alert('Vehicle installment plan saved.');};
+$('installmentPaymentForm').onsubmit=e=>{e.preventDefault();const plan=data.installments.find(p=>p.id===$('ipPlan').value);if(!plan){alert('Please select a vehicle installment plan.');return}const amount=Number($('ipAmount').value);const paid=data.installmentPayments.filter(p=>p.planId===plan.id).reduce((a,p)=>a+Number(p.amount||0),0);const balance=Math.max(0,Number(plan.total)-Number(plan.down||0)-paid);if(amount>balance+0.0001){alert('Payment amount is greater than remaining balance ('+money(balance)+' OMR).');return}data.installmentPayments.push({id:crypto.randomUUID(),planId:plan.id,date:$('ipDate').value,amount,ref:$('ipRef').value.trim(),notes:$('ipNotes').value.trim()});const due=new Date(plan.dueDate+'T12:00:00');due.setMonth(due.getMonth()+1);plan.dueDate=`${due.getFullYear()}-${String(due.getMonth()+1).padStart(2,'0')}-${String(due.getDate()).padStart(2,'0')}`;e.target.reset();$('ipDate').value=new Date().toISOString().slice(0,10);save();go('installments');alert('Installment payment saved. Remaining balance updated.');};
+function downloadInstallments(){const rows=[['Vehicle','Finance','Total Price OMR','Down Payment OMR','Monthly OMR','Paid OMR','Balance OMR','Next Due','Status'],...data.installments.map(p=>{const v=data.vehicles.find(x=>x.id===p.vehicleId),paid=data.installmentPayments.filter(x=>x.planId===p.id).reduce((a,x)=>a+Number(x.amount||0),0),balance=Math.max(0,Number(p.total)-Number(p.down||0)-paid),today=new Date().toISOString().slice(0,10);return [v?.number||'',p.finance,p.total,p.down,p.monthly,paid,balance,p.dueDate,balance<=0?'PAID':(today>p.dueDate?'OVERDUE':'ACTIVE')]})];const csv=rows.map(r=>r.map(x=>'"'+String(x??'').replace(/"/g,'""')+'"').join(',')).join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'}));a.download='AFAQ_Vehicle_Installment_Report.csv';a.click();URL.revokeObjectURL(a.href)}
+$('mType').addEventListener('change',()=>{const tyre=$('mType').value==='Tyre Change';$('tyrePositionWrap').style.display=tyre?'block':'none';$('otherWorkWrap').style.display=$('mType').value==='Other Maintenance'?'block':'none';});
+function compressVehiclePhoto(file){return new Promise((resolve,reject)=>{if(!file){resolve('');return}if(!file.type.startsWith('image/')){reject(new Error('Please select an image file.'));return}const reader=new FileReader();reader.onerror=()=>reject(new Error('Could not read image.'));reader.onload=()=>{const img=new Image();img.onerror=()=>reject(new Error('Invalid image file.'));img.onload=()=>{const max=1000,scale=Math.min(1,max/Math.max(img.width,img.height));const canvas=document.createElement('canvas');canvas.width=Math.round(img.width*scale);canvas.height=Math.round(img.height*scale);canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);resolve(canvas.toDataURL('image/jpeg',0.62));};img.src=reader.result;};reader.readAsDataURL(file);});}
+[['vInsurancePhoto','vInsurancePhotoPreview'],['vRegFront','vRegFrontPreview'],['vRegBack','vRegBackPreview'],['vVehiclePhoto','vVehiclePhotoPreview']].forEach(([input,preview])=>$(input).addEventListener('change',()=>{const f=$(input).files[0];$(preview).innerHTML=f?`Selected: ${esc(f.name)}`:'No photo selected';}));
+$('vehicleForm').onsubmit=async e=>{e.preventDefault();if(!editingVehicleId&&data.vehicles.length>=25){alert('Demo limit is 25 vehicles.');return}let number=$('vNumber').value.trim();if(data.vehicles.some(v=>v.id!==editingVehicleId&&v.number.toLowerCase()===number.toLowerCase())){alert('This vehicle number already exists.');return}const btn=e.submitter;btn.disabled=true;try{const existing=editingVehicleId?data.vehicles.find(v=>v.id===editingVehicleId):null;const [insurancePhoto,registrationFrontPhoto,registrationBackPhoto,vehiclePhoto]=await Promise.all([compressVehiclePhoto($('vInsurancePhoto').files[0]),compressVehiclePhoto($('vRegFront').files[0]),compressVehiclePhoto($('vRegBack').files[0]),compressVehiclePhoto($('vVehiclePhoto').files[0])]);const record={...(existing||{}),id:existing?.id||crypto.randomUUID(),group:$('vGroup').value,number,model:$('vModel').value.trim(),driver:$('vDriver').value.trim(),km:$('vKm').value,insurance:$('vInsurance').value,registration:$('vRegistration').value,insurancePhoto:insurancePhoto||existing?.insurancePhoto||'',registrationFrontPhoto:registrationFrontPhoto||existing?.registrationFrontPhoto||'',registrationBackPhoto:registrationBackPhoto||existing?.registrationBackPhoto||'',vehiclePhoto:vehiclePhoto||existing?.vehiclePhoto||'',tripsSinceOil:Number(existing?.tripsSinceOil||0)};if(existing)Object.assign(existing,record);else data.vehicles.push(record);editingVehicleId=null;e.target.reset();['vInsurancePhotoPreview','vRegFrontPreview','vRegBackPreview','vVehiclePhotoPreview'].forEach(id=>$(id).textContent='No photo selected');$('addVehicle').querySelector('h2').textContent='Add New Vehicle';btn.textContent='Save Vehicle';save();go('vehicles');alert(existing?'Vehicle details updated successfully.':'Vehicle details and photos saved to your AFAQ account.');}catch(err){alert(err.message||'Could not save photos. Try smaller images.');}finally{btn.disabled=false}}
+function compressBillPhoto(file){return new Promise((resolve,reject)=>{if(!file){resolve('');return}if(!file.type.startsWith('image/')){reject(new Error('Please select an image file.'));return}const reader=new FileReader();reader.onerror=()=>reject(new Error('Could not read bill photo.'));reader.onload=()=>{const img=new Image();img.onerror=()=>reject(new Error('Invalid image file.'));img.onload=()=>{const max=1100,scale=Math.min(1,max/Math.max(img.width,img.height));const canvas=document.createElement('canvas');canvas.width=Math.round(img.width*scale);canvas.height=Math.round(img.height*scale);canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);resolve(canvas.toDataURL('image/jpeg',0.68));};img.src=reader.result;};reader.readAsDataURL(file);});}
+$('mBillPhoto').addEventListener('change',()=>{const files=[...$('mBillPhoto').files];if(!files.length){$('billPhotoPreview').textContent='No bill photos selected';return}$('billPhotoPreview').innerHTML=files.map((file,i)=>{const url=URL.createObjectURL(file);return `<span class="bill-file-item">${i+1}. ${esc(file.name)} <button type="button" class="btn secondary" onclick="viewImage('${url}')">Preview</button></span>`}).join('');});
+$('maintenanceForm').onsubmit=async e=>{e.preventDefault();if(!$('mVehicle').value){alert('Please add/select a vehicle first.');return}if($('mType').value==='Tyre Change'&&!document.querySelector('input[name="tyrePosition"]:checked')){alert('Please select tyre position (L1-L5 or R1-R5).');return}const btn=e.submitter;btn.disabled=true;try{const billFiles=[...$('mBillPhoto').files];const billPhotos=await Promise.all(billFiles.map(compressBillPhoto));const selectedVehicle=data.vehicles.find(v=>v.id===$('mVehicle').value);const existingJob=editingJobId?data.jobs.find(j=>j.id===editingJobId):null;const jobRecord={...(existingJob||{}),id:existingJob?.id||crypto.randomUUID(),vehicleId:$('mVehicle').value,date:$('mDate').value,km:$('mKm').value,type:$('mType').value,otherWork:$('mOtherWork').value.trim(),tyrePositions:[...document.querySelectorAll('input[name="tyrePosition"]:checked')].map(x=>x.value),garage:$('mGarage').value.trim(),cost:$('mCost').value||0,bill:$('mBill').value.trim(),billPhotos:billPhotos.length?billPhotos:(existingJob?.billPhotos|| (existingJob?.billPhoto?[existingJob.billPhoto]:[])),billPhoto:billPhotos[0]||(existingJob?.billPhoto||''),notes:$('mNotes').value.trim()};if(existingJob)Object.assign(existingJob,jobRecord);else data.jobs.push(jobRecord);if(selectedVehicle?.group==='Dubai'&&$('mType').value==='Oil Change'){selectedVehicle.tripsSinceOil=0;selectedVehicle.lastOilChangeKm=$('mKm').value||selectedVehicle.km||'';}editingJobId=null;e.target.reset();$('maintenance').querySelector('h2').textContent='Add Maintenance Record';$('maintenanceForm').querySelector('button[type=submit]').textContent='Save Maintenance';$('billPhotoPreview').textContent='No bill photos selected';$('tyrePositionWrap').style.display='none';$('otherWorkWrap').style.display='none';$('mDate').value=new Date().toISOString().slice(0,10);save();go('dashboard');alert(existingJob?'Maintenance history updated successfully.':'Maintenance record and bill photo saved to your AFAQ account.');}catch(err){alert(err.message||'Could not save bill photo. Try a smaller photo.');}finally{btn.disabled=false}};
+function openTripFor(id){selectedTripVehicleId=id;go('trips');render();$('tVehicle').value=id;$('tripHistoryVehicle').value=id;renderTripHistory();}
+$('tripHistoryVehicle').onchange=()=>{selectedTripVehicleId=$('tripHistoryVehicle').value;$('tVehicle').value=selectedTripVehicleId;renderTripHistory();};
+$('tVehicle').onchange=()=>{selectedTripVehicleId=$('tVehicle').value;$('tripHistoryVehicle').value=selectedTripVehicleId;renderTripHistory();};
+$('tripForm').onsubmit=e=>{e.preventDefault();const v=data.vehicles.find(x=>x.id===$('tVehicle').value);const start=Number($('tStartKm').value),end=Number($('tEndKm').value);if(!v||v.group!=='Dubai'){alert('Please select a Dubai vehicle.');return}if(end<=start){alert('Ending KM must be greater than Starting KM.');return}if(v.km&&start<Number(v.km)){alert('Starting KM cannot be less than the vehicle previous KM meter reading ('+v.km+').');return}v.tripsSinceOil=Number(v.tripsSinceOil||0)+1;v.km=String(end);data.trips.push({id:crypto.randomUUID(),vehicleId:v.id,date:$('tDate').value,startKm:start,endKm:end,tripNo:v.tripsSinceOil});const chosenId=v.id;e.target.reset();$('tDate').value=new Date().toISOString().slice(0,10);selectedTripVehicleId=chosenId;save();go('trips');$('tVehicle').value=chosenId;$('tripHistoryVehicle').value=chosenId;renderTripHistory();if(v.tripsSinceOil>=15)alert('15 trips complete. Oil change is due for vehicle '+v.number+'.');else alert('Trip saved. '+v.tripsSinceOil+' / 15 trips completed.');};
+function editMaintenance(id){const j=data.jobs.find(x=>x.id===id);if(!j)return;editingJobId=id;$('maintenanceForm').reset();$('mVehicle').value=j.vehicleId;$('mDate').value=j.date||'';$('mKm').value=j.km||'';$('mType').value=j.type||'';$('mOtherWork').value=j.otherWork||'';$('mGarage').value=j.garage||'';$('mCost').value=j.cost||0;$('mBill').value=j.bill||'';$('mNotes').value=j.notes||'';document.querySelectorAll('input[name="tyrePosition"]').forEach(x=>x.checked=(j.tyrePositions||[]).includes(x.value));$('tyrePositionWrap').style.display=j.type==='Tyre Change'?'block':'none';$('otherWorkWrap').style.display=j.type==='Other Maintenance'?'block':'none';$('billPhotoPreview').textContent=(j.billPhotos?.length||(j.billPhoto?1:0))+' existing bill photo(s) saved. New selection will replace them.';$('maintenanceForm').querySelector('button[type=submit]').textContent='Update Maintenance';$('maintenance').querySelector('h2').textContent='Edit Maintenance Record';go('maintenance')}
+function openVehicle(id){let v=data.vehicles.find(x=>x.id===id);if(!v)return;$('detailTitle').textContent=v.number;$('detailMeta').textContent=[v.group||'Oman',v.model,v.driver?'Driver: '+v.driver:'',v.km?'Current KM: '+v.km:'',v.group==='Dubai'?`Trips since oil change: ${Number(v.tripsSinceOil||0)} / 15`:`Last oil change: ${omanOilInfo(v).last||'Not recorded'} • Next due: ${omanOilInfo(v).due||'Not set'} • ${omanOilInfo(v).status}`,v.insurance?'Insurance expiry: '+v.insurance:'',v.registration?'Registration expiry: '+v.registration:''].filter(Boolean).join(' • ');const docs=[['Vehicle Picture',v.vehiclePhoto],['Insurance Photo',v.insurancePhoto],['Registration Front',v.registrationFrontPhoto],['Registration Back',v.registrationBackPhoto]];$('vehicleDocs').innerHTML=docs.filter(x=>x[1]).map(([label,src])=>`<div class="doc-card"><b>${label}</b><div class="doc-preview"><a href="#" onclick="viewImage('${src}');return false"><img src="${src}" alt="${label}"></a><button type="button" class="btn secondary" onclick="viewImage('${src}')">View Full Photo</button></div></div>`).join('');let jobs=data.jobs.filter(j=>j.vehicleId===id).sort((a,b)=>b.date.localeCompare(a.date));$('detailRows').innerHTML=jobs.map(j=>`<tr><td>${esc(j.date)}</td><td>${esc(j.km||'-')}</td><td>${esc(j.type==='Other Maintenance'?(j.otherWork||j.type):j.type)}</td><td>${esc((j.tyrePositions||[]).join(', ')||'-')}</td><td>${esc(j.garage||'-')}</td><td>${money(j.cost)}</td><td>${(j.billPhotos?.length||(j.billPhoto?1:0))?((j.billPhotos?.length?j.billPhotos:[j.billPhoto]).map((src,i)=>`<button type="button" class="btn secondary" style="margin:2px" onclick="viewImage('${src}')">View Bill ${i+1}</button>`).join('')):esc(j.bill||'-')}</td><td>${esc(j.notes||'-')}</td><td><button type="button" class="btn" onclick="editMaintenance('${j.id}')">Edit</button></td></tr>`).join('')||'<tr><td colspan="9" class="empty">No maintenance history for this vehicle.</td></tr>';go('vehicleDetail')}
+function downloadCSV(){let head=['Date','Vehicle Number','Model Number','Current KM','Work Type','Other Maintenance Details','Tyre Positions','Garage','Cost OMR','Bill Ref','Notes'];let lines=[head,...data.jobs.map(j=>{let v=data.vehicles.find(x=>x.id===j.vehicleId);return [j.date,v?.number||'',v?.model||'',j.km,j.type,j.otherWork||'',(j.tyrePositions||[]).join('; '),j.garage,j.cost,j.bill,j.notes]} )].map(row=>row.map(x=>'"'+String(x??'').replace(/"/g,'""')+'"').join(','));let blob=new Blob(['\ufeff'+lines.join('\r\n')],{type:'text/csv;charset=utf-8;'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='AFAQ_Vehicle_Maintenance_Report.csv';a.click();URL.revokeObjectURL(a.href)}
+$('mDate').value=new Date().toISOString().slice(0,10);
+$('tDate').value=new Date().toISOString().slice(0,10);
+$('ipDate').value=new Date().toISOString().slice(0,10);
+(async function boot(){if(!supabaseClient){showAuth('Supabase client load nahi hua. Internet connection check karein.');return}const {data:{session},error}=await supabaseClient.auth.getSession();if(error){showAuth(error.message);return}if(session){await finishLogin(session)}else{showAuth('Email/password se login karein ya naya account banayein.')}supabaseClient.auth.onAuthStateChange((_event,session)=>{if(session&&!currentUser){setTimeout(()=>finishLogin(session),0)}else if(!session){currentUser=null;showAuth('Please login to continue.')}})})();
+</script>
+</body>
+</html><style>
+/* Sidebar navigation layout */
+@media(min-width:761px){
+  body{min-height:100vh;background:radial-gradient(circle at 82% 4%,#e8eef4 0,transparent 34%),linear-gradient(135deg,#f6f8fa,#e9eef3)}
+  header{position:fixed;left:0;top:0;bottom:0;width:252px;height:100vh;overflow-y:auto;z-index:50;padding:22px 15px;background:linear-gradient(180deg,#101820 0%,#202a35 52%,#101820 100%);box-shadow:8px 0 28px #10182022}
+  header:after{right:-180px;top:auto;bottom:-150px}
+  .head{display:flex;flex-direction:column;align-items:stretch;gap:20px}
+  .brand{display:flex;flex-direction:column;align-items:flex-start;gap:12px}
+  .brand img{width:178px!important;max-width:100%;height:auto!important;object-fit:contain;background:#fff;border-radius:12px;padding:8px}
+  .brand-copy h1{font-size:19px;line-height:1.25}
+  .sub{font-size:11px;line-height:1.5}
+  .userbar{display:flex;flex-direction:column;align-items:stretch;gap:8px;width:100%}
+  .userbar #signedInEmail{font-size:11px;overflow-wrap:anywhere;color:#d9e2ea}
+  .userbar .btn{width:100%}
+  nav{display:flex;flex-direction:column;align-items:stretch;gap:7px;margin:25px 0 0;width:100%;max-width:none}
+  nav button{width:100%;text-align:left;padding:13px 14px;border-radius:10px;font-size:13px;display:flex;align-items:center;gap:10px;border:1px solid #ffffff1c;background:#ffffff0b;color:#eaf0f5}
+  nav button:before{content:'›';font-size:20px;line-height:10px;color:#ef334f}
+  nav button.active,nav button:hover{background:#e51d3e;color:#fff;border-color:#ff647b;box-shadow:0 5px 14px #0004;transform:translateX(2px)}
+  nav button.active:before,nav button:hover:before{color:#fff}
+  main{max-width:none;margin:0 0 0 252px;padding:30px 28px 48px}
+}
+@media(max-width:760px){
+  header{position:relative}
+  nav{display:flex;flex-direction:row;flex-wrap:nowrap;overflow-x:auto;padding:2px 0 8px;scrollbar-width:thin}
+  nav button{white-space:nowrap;flex:0 0 auto}
+}
+</style>
